@@ -14,16 +14,17 @@ const minimizer = new TerserPlugin({
 })
 
 WebpackConfig = {
-    // will generate .js from src/js/main.js
+    // will generate index.js from src/js/main.js
     entry: {
-        treevizu: ['./src/js/main.js'],
+        index: ['./src/js/main.js'],
     },
     // will minimize when mode = development
     mode: env,
     // output options
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: '[name].js',
+        filename: 'index.js',
+        libraryTarget: 'commonjs2'
     },
     // handle loader for each file type
     module: {

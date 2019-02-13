@@ -1,6 +1,6 @@
 {
   "name": "treevizu",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "create a tree visualization of some data",
   "main": "treevizu",
   "scripts": {
@@ -40,8 +40,4 @@
     "createjs": "1.x",
     "jquery": "3.3.x"
   },
-  "peerDependencies": {
-    "createjs": "1.x",
-    "jquery": "3.3.x"
-  }
 }
