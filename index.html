@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Treeviz Plugin</title>
+  <meta charset="utf-8">
+  <script src="dist/treevizu.js"></script>
+</head>
+<body onload="" style="background:#DFDFDF;">
+  <canvas id="tree-canvas" style="background:#FFF; width: 80%; height: 800px; margin: 20px 10%;"></canvas>
+</body>
+
+  <script type="text/javascript">
+
+    var canvas = $('#tree-canvas');
+    var tree = canvas.TreeVizu({id: 'tree-canvas', width: canvas.width(), height: canvas.height()});
+
+
+    // root
+    var root = tree.addRoot("I have seen an animal !", {id: 'root'}, {color: 'red', fontStyle: 'italic', fontSize: '18px'});
+
+    // level1
+    var leaf = {name: "Does it have feathers ?", meta: {id: 'feather'}};
+    var feather = tree.addChild(root, leaf);
+
+    // level 2
+
+    var leaf = {name: "Does it live in a barnyard ?", meta: {id: 'barnyard', label: 'No'}};
+    var barnyard = tree.addChild(feather, leaf);
+
+    var leaf = {name: "Is it a mammal ?", meta: {id: 'mammal', label: 'Yes'}};
+    var mammal = tree.addChild(feather, leaf);
+
+    // level 3
+    var leaf = {name: "Is it wise ?", meta: {id: 'wise', label: 'No'}};
+    var wise = tree.addChild(barnyard, leaf);
+
+    var leaf = {name: "Chicken", meta: {id: 'chicken', label: 'Yes'}};
+    var chicken = tree.addChild(barnyard, leaf);
+
+    var leaf = {name: "Gila monster", meta: {id: 'monster', label: 'No'}};
+    var monster = tree.addChild(mammal, leaf);
+
+    var leaf = {name: "Does it have stripes ?", meta: {id: 'stripes', label: 'Yes'}};
+    var stripes = tree.addChild(mammal, leaf);
+
+
+    // level 4
+    var leaf = {name: "Does it gobble ?", meta: {id: 'gobble', label: 'No'}};
+    var gobble = tree.addChild(wise, leaf);
+
+    var leaf = {name: "Owl", meta: {id: 'owl', label: 'Yes'}};
+    var monster = tree.addChild(wise, leaf);
+
+    var leaf = {name: "Tiger", meta: {id: 'tiger', label: 'Yes'}};
+    var tiger = tree.addChild(stripes, leaf);
+
+    var leaf = {name: "Does it hop ?", meta: {id: 'hop', label: 'No'}};
+    var hop = tree.addChild(stripes, leaf);
+
+    // level 5
+    var leaf = {name: "Does it say nevermore ?", meta: {id: 'nevermore', label: 'No'}};
+    var nevermore = tree.addChild(gobble, leaf);
+
+    var leaf = {name: "Turkey", meta: {id: 'turkey', label: 'Yes'}};
+    var turkey = tree.addChild(gobble, leaf);
+
+    var leaf = {name: "Kangaroo", meta: {id: 'kangaroo', label: 'Yes'}};
+    var kangaroo = tree.addChild(hop, leaf);
+
+    var leaf = {name: "Elephant", meta: {id: 'elephant', label: 'No'}};
+    var elephant = tree.addChild(hop, leaf);
+
+    // level 6
+    var leaf = {name: "Raven", meta: {id: 'raven', label: 'Yes'}};
+    var raven = tree.addChild(nevermore, leaf);
+
+    var leaf = {name: "Eagle", meta: {id: 'eagle', label: 'No'}};
+    var eagle = tree.addChild(nevermore, leaf);
+
+    tree.draw();
+    //tree.moveTo(root);
+    //tree.setProgressive('first-children');
+    //tree.redraw();
+
+
+
+  </script>
+</html>
