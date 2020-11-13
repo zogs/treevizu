@@ -1,11 +1,8 @@
-import jQuery from 'jquery';
-import createjs from 'createjs';
+import {Stage, Shape, Container, Text, Point, Touch, Bitmap} from '@createjs/easeljs';
+import {Tween, Ease} from '@createjs/tweenjs';
 
-window.$ = window.jQuery = jQuery;
 
-const Treevizu = (function($) {
-
-  $.fn.TreeVizu = function(options) {
+window.TreeVizu = function(params) {
 
     var defaults = {
       id: 'canvas',
@@ -50,10 +47,10 @@ const Treevizu = (function($) {
         }
       }
     };
-    var params = $.extend(true, defaults,options);
+    var params = Object.assign({}, defaults, params);
 
-    var canvas = $('#'+params.id);
-    var stage = new createjs.Stage(params.id);
+    var canvas = document.getElementById(params.id);
+    var stage = new Stage(params.id);
     if(stage.canvas === null) console.error('Wrong canvas id');
     var root = null;
     var current = root;
@@ -66,31 +63,31 @@ const Treevizu = (function($) {
     this.progressive = false;
 
     //background
-    this.background = new createjs.Shape();
+    this.background = new Shape();
     this.background.alpha = 0.5;
     this.background.cursor = 'move';
     stage.addChild(this.background);
 
-    this.persistance = new createjs.Container();
+    this.persistance = new Container();
     stage.addChild(this.persistance);
 
     // main container
-    this.main_cont = new createjs.Container();
+    this.main_cont = new Container();
     stage.addChild(this.main_cont);
 
     // controls container
-    this.controls_cont = new createjs.Container();
+    this.controls_cont = new Container();
     stage.addChild(this.controls_cont);
 
 
     // content container
-    this.boxes_cont = new createjs.Container();
-    this.links_cont = new createjs.Container();
-    this.labels_cont = new createjs.Container();
+    this.boxes_cont = new Container();
+    this.links_cont = new Container();
+    this.labels_cont = new Container();
     this.main_cont.addChild(this.boxes_cont, this.links_cont , this.labels_cont);
 
     // debug container
-    this.debug_cont = new createjs.Container();
+    this.debug_cont = new Container();
     this.debug_cont.alpha = 0;
     this.main_cont.addChild(this.debug_cont);
 
@@ -142,10 +139,10 @@ const Treevizu = (function($) {
 
       let buttonSize = 30;
 
-      this.zoomInButton = new createjs.Container();
-      var bkg = new createjs.Shape();
+      this.zoomInButton = new Container();
+      var bkg = new Shape();
       bkg.graphics.beginFill('#DDD').drawRect(0,0,buttonSize,buttonSize);
-      var text = new createjs.Text('+', '20px arial', '#000');
+      var text = new Text('+', '20px arial', '#000');
       text.x = 8;
       text.y = 4;
       this.zoomInButton.x = 20;
@@ -153,10 +150,10 @@ const Treevizu = (function($) {
       this.zoomInButton.cursor = 'pointer';
       this.zoomInButton.addChild(bkg, text);
 
-      this.zoomOutButton = new createjs.Container();
-      var bkg = new createjs.Shape();
+      this.zoomOutButton = new Container();
+      var bkg = new Shape();
       bkg.graphics.beginFill('#DDD').drawRect(0,0,buttonSize,buttonSize);
-      var text = new createjs.Text('-', '20px arial', '#000');
+      var text = new Text('-', '20px arial', '#000');
       text.x = 10;
       text.y = 4;
       this.zoomOutButton.x = this.zoomInButton.x;
@@ -217,7 +214,7 @@ const Treevizu = (function($) {
         var x = params.viewX - node.x * this.main_cont.scale;
         var y = params.viewY - (node.y + node.box.height + params.style.padding + params.style.borderWidth) * this.main_cont.scale;
       }
-      createjs.Tween.get(this.main_cont).to({x: x, y: y}, time, createjs.Ease.quadInOut).on('change',this.update);
+      Tween.get(this.main_cont).to({x: x, y: y}, time, Ease.quadInOut).on('change',this.update);
 
     }
 
@@ -294,7 +291,7 @@ const Treevizu = (function($) {
       // erase current node
       this.eraseNode(node);
       // extend style
-      style = $.extend(true, {}, node.style, style);
+      style = Object.assign({}, node.style, style);
       // clone node
       let newNode = this.cloneNode(node, style);
       // update array with new node
@@ -322,18 +319,18 @@ const Treevizu = (function($) {
 
     this.eraseNode = function(node, ms = 0) {
 
-      createjs.Tween.get(node.box).to({alpha: 0}, ms).call(function() {
+      Tween.get(node.box).to({alpha: 0}, ms).call(function() {
          that.boxes_cont.removeChild(node.box);
       });
 
       if(node.label) {
-          createjs.Tween.get(node.label).to({alpha: 0}, ms).call(function() {
+          Tween.get(node.label).to({alpha: 0}, ms).call(function() {
             that.labels_cont.removeChild(node.label);
           });
       }
 
       if(node.links) {
-          createjs.Tween.get(node.links).to({alpha: 0}, ms).call(function() {
+          Tween.get(node.links).to({alpha: 0}, ms).call(function() {
             that.links_cont.removeChild(node.links);
           });
       }
@@ -368,10 +365,11 @@ const Treevizu = (function($) {
 
     this.createNode = function(name, meta = {}, style) {
 
-      var style = $.extend(true, {}, params.style, style);
-      var box = new createjs.Container();
+      var style = Object.assign({}, params.style, style);
+      var box = new Container();
       var fontString = style.fontStyle+' '+style.fontSize+' '+style.fontFamily;
-      var txt = new createjs.Text(name, fontString, style.color);
+      if(!name || name == '') name = ' '; // fix an createjs error when name is an empty string
+      var txt = new Text(name, fontString, style.color);
       txt.lineWidth = style.lineWidth;
       txt.lineHeight = style.lineHeight;
       txt.textBaseline = 'top';
@@ -379,7 +377,7 @@ const Treevizu = (function($) {
       var bds = txt.getBounds();
       var width = bds.width;
       var height = txt.getMeasuredHeight();
-      var rec = new createjs.Shape();
+      var rec = new Shape();
       rec.graphics.beginStroke(style.borderColor).setStrokeStyle(style.borderWidth).beginFill(style.backgroundColor).drawRoundRect(0,0,width+2*style.padding, height + 2*style.padding, style.borderRadius, style.borderRadius, style.borderRadius, style.borderRadius);
       rec.x = - width/2 - style.padding
       txt.regX = width/2;
@@ -390,7 +388,7 @@ const Treevizu = (function($) {
       box.txt = txt;
       box.width = width+2*style.padding;
       box.height = height+2*style.padding;
-      var center = new createjs.Shape();
+      var center = new Shape();
       center.graphics.beginFill('red').drawCircle(0,0,3);
       center.alpha = 0;
       box.addChild(center);
@@ -494,7 +492,7 @@ const Treevizu = (function($) {
       this.boxes_cont.addChild(box);
 
       // add debug
-      var debug = new createjs.Shape();
+      var debug = new Shape();
       debug.graphics.beginStroke('red').setStrokeStyle(1).drawRect(0,0,node.childrenWidth, node.box.height);
       debug.x = box.x - node.childrenWidth/2;
       debug.y = box.y;
@@ -525,14 +523,14 @@ const Treevizu = (function($) {
 
       /*
       // reset all nodes style
-      oldStyle = oldStyle ? $.extend({}, node.style, oldStyle) : $.extend({}, node.style, params.style);
+      oldStyle = oldStyle ? Object.assign({}, node.style, oldStyle) : Object.assign({}, node.style, params.style);
       nodes.map(function(n) {
         this.setNodeStyle(n, oldStyle);
       });
       this.setNodeStyle(nodes[10], oldStyle);
 
       // apply style to node
-      style = $.extend({}, node.style, style);
+      style = Object.assign({}, node.style, style);
       this.setNodeStyle(node, style);
 
       // apply style to all parents
@@ -545,13 +543,13 @@ const Treevizu = (function($) {
       var pad = params.style.link.height;
 
       // point where the line get out the parent box
-      var out = new createjs.Point();
+      var out = new Point();
       // point where the line bend
-      var turn1 = new createjs.Point();
+      var turn1 = new Point();
       // point where the line bend
-      var turn2 = new createjs.Point();
+      var turn2 = new Point();
       // point where the line enter child box
-      var in_ = new createjs.Point();
+      var in_ = new Point();
 
       if(params.direction == 'down') {
         out.x = parent.x;
@@ -595,10 +593,10 @@ const Treevizu = (function($) {
       }
 
       // set style of the link
-      var style = $.extend(true, {}, params.style.link, node.style.link);
+      var style = Object.assign({}, params.style.link, node.style.link);
 
       // draw link
-      var link = new createjs.Shape();
+      var link = new Shape();
       link.graphics.beginStroke(style.color).setStrokeStyle(style.weight)
                 .moveTo(out.x, out.y)
                 .lineTo(turn1.x, turn1.y)
@@ -617,15 +615,16 @@ const Treevizu = (function($) {
     this.drawLabel = function(node, parent) {
 
       // set style of the link
-      var style = $.extend(true, {}, params.style.label, node.style.label);
+      var style = Object.assign({}, params.style.label, node.style.label);
       var fontString = style.fontStyle+' '+style.fontSize+' '+style.fontFamily;
-      var label = new createjs.Container();
+      var label = new Container();
       var name = node.meta.label;
+      name = (name.length > 0)? name : ' '; //fix an createjs error when name is an empty string
       name = (name.length > style.maxCharacters)? name.substring(0, style.maxCharacters)+'...' : name;
-      var text = new createjs.Text(name, fontString, style.color);
+      var text = new Text(name, fontString, style.color);
       text.maxWidth = style.maxWidth;
       var b = text.getBounds();
-      var bkg = new createjs.Shape();
+      var bkg = new Shape();
       bkg.graphics.beginStroke(style.borderColor).setStrokeStyle(style.borderWidth).beginFill(style.backgroundColor).drawRoundRect(-b.width/2-5, -b.height/2,b.width+10, b.height*2, style.borderRadius, style.borderRadius, style.borderRadius, style.borderRadius);
       label.addChild(bkg);
       label.addChild(text);
@@ -841,10 +840,10 @@ const Treevizu = (function($) {
 
       if (this.isMobile()) { //if android or ios
         //enable Touch event
-        createjs.Touch.enable(stage);
+        Touch.enable(stage);
       }
 
-      var can = canvas.get(0);
+      var can = canvas;
       can.width = width;
       can.height = height;
       can.style.width = width+'px';
@@ -870,7 +869,7 @@ const Treevizu = (function($) {
     /*
     this.saveCanvas = function(x, y) {
 
-      var bitmap = new createjs.Bitmap(stage.canvas);
+      var bitmap = new Bitmap(stage.canvas);
       bitmap.cache(0, 0, stage.canvas.width, stage.canvas.height, this.main_cont.scale);
 
       try {
@@ -879,14 +878,14 @@ const Treevizu = (function($) {
       catch {
         throw new Error('[WARN] Cette erreur vient de createjs, elle est décrite ici : https://github.com/CreateJS/EaselJS/issues/956');
       }
-      var image = new createjs.Bitmap(base64);
+      var image = new Bitmap(base64);
       image.x = x;
       image.y = y+10;
 
       this.persistance.removeAllChildren();
       this.persistance.addChild(image);
 
-      createjs.Tween.get(image).to({alpha: 0}, 500);
+      Tween.get(image).to({alpha: 0}, 500);
     }
     */
 
@@ -956,4 +955,3 @@ const Treevizu = (function($) {
 
     return this;
   }
-})(jQuery);

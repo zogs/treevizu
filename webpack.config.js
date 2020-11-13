@@ -4,14 +4,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 
 //used to minimize .js
-const minimizer = new TerserPlugin({
-    cache: false,
-    parallel: true,
-    sourceMap: true,
-    terserOptions: {
-      // https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
-    }
-})
+const minimizer = new TerserPlugin();
 
 WebpackConfig = {
     // will generate index.js from src/js/main.js
@@ -24,23 +17,14 @@ WebpackConfig = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'index.js',
-        libraryTarget: 'commonjs2'
     },
     // handle loader for each file type
     module: {
         rules: [
-        // .css
-        {
-            test: /\.css$/,
-            use: ['style-loader', 'css-loader']
-        },
-        // the following is need to createjs to work ( dont ask me why)
-        {
-            test: /node_modules[/\\]createjs/,
-            loaders: [
-              'imports-loader?this=>window',
-              'exports-loader?window.createjs'
-            ]
+          // .css
+          {
+              test: /\.css$/,
+              use: ['style-loader', 'css-loader']
           },
         ]
     },
@@ -49,8 +33,6 @@ WebpackConfig = {
     ],
     resolve: {
         alias: {
-          // needed to import createjs
-          createjs: 'createjs/builds/1.0.0/createjs.js',
           // shortcut aliases
           '@root': path.resolve('./'),
           '@src': path.resolve('./src/'),
@@ -63,6 +45,7 @@ WebpackConfig = {
     devtool: env == 'development' ? 'cheap-eval-source-map' : false,
     // define optimization (production env only)
     optimization: {
+        minimize: env == 'production' ? true : false,
         minimizer: env == 'production' ? [minimizer] : [],
     },
 };

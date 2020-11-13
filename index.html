@@ -3,7 +3,7 @@
 <head>
   <title>Treeviz Plugin</title>
   <meta charset="utf-8">
-  <script src="dist/treevizu.js"></script>
+  <script src="dist/index.js" type="text/javascript"></script>
 </head>
 <body onload="" style="background:#DFDFDF;">
   <canvas id="tree-canvas" style="background:#FFF; width: 80%; height: 800px; margin: 20px 10%;"></canvas>
@@ -11,8 +11,8 @@
 
   <script type="text/javascript">
 
-    var canvas = $('#tree-canvas');
-    var tree = canvas.TreeVizu({id: 'tree-canvas', width: canvas.width(), height: canvas.height()});
+    var canvas = document.getElementById('tree-canvas');
+    var tree = new TreeVizu({id: 'tree-canvas', width: canvas.offsetWidth, height: canvas.offsetHeight, controls: true});
 
 
     // root
