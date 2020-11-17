@@ -2,7 +2,7 @@ import {Stage, Shape, Container, Text, Point, Touch, Bitmap} from '@createjs/eas
 import {Tween, Ease} from '@createjs/tweenjs';
 
 
-window.TreeVizu = function(params) {
+export default function(params) {
 
     var defaults = {
       id: 'canvas',
