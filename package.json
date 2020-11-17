@@ -1,6 +1,6 @@
 {
   "name": "treevizu",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "create a tree visualization of some data",
   "main": "src/js/main.js",
   "scripts": {
